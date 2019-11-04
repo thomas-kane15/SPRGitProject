@@ -145,9 +145,31 @@ Let's make maps using ggplot and the `HappyPlanetIndex` data.
 
 1. See if you can adapt the textbook code for the map of New Zealand in section 3.9 to display a map of the world instead. Color the continents forest green with a lemon chiffon outline. Check out [this overview](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf) of colors in R if you want to play with the coloring a bit.
 
+```{r}
+world <- map_data("world")
+ggplot(world, aes(long, lat, group = group)) +
+  geom_polygon(fill = "forestgreen", colour = "lemonchiffon")
+```
+
+
 #### Question 2
 
 2. Create a choropleth map of world happiness using `HappyPlanetIndex` data. In other words, create a world map, but instead of having every country the same color, apply different colors based on the happiness level of that country (using the Happiness variable in the HappyPlanetIndex data set). [This guide](https://www.datanovia.com/en/blog/how-to-create-a-map-using-ggplot2/) can get you started.
+
+```{r}
+world <- map_data("world")
+
+world_map <- world %>%
+  mutate(
+    world = ifelse(region == "USA", "United States of America", region)
+  )
+
+hap.lvl.map <- left_join(HappyPlanetIndex, world_map, by = c("Country" = "region"))
+
+ggplot(hap.lvl.map, aes(long, lat, group = group))+
+  geom_polygon(aes(fill = Happiness), color = "white")+
+  scale_fill_viridis_c(option = "C")
+```
 
 
 ## IV. Data Transformation Discussion Exercises:
